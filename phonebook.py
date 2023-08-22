@@ -1,15 +1,24 @@
 import csv
+import logging
 import os
 
 PHONEBOOK = os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), 'contacts.csv')
+    os.path.abspath(__file__)), "contacts.csv")
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename="main.log",
+    filemode="w",
+    encoding="utf8")
+
+logger = logging.getLogger("main")
 
 
 def load_contacts():
     """Метод загрузки контактов из файла в список."""
     contact_list = []
     try:
-        with open(PHONEBOOK, 'r') as file:
+        with open(PHONEBOOK, "r") as file:
             reader = csv.reader(file)
             for row in reader:
                 contact_list.append(row)
@@ -21,7 +30,7 @@ def load_contacts():
 def save_contacts(contact_list):
     """Метод сохранения контактов из списка в файл.
     :param contact_list: список контактов"""
-    with open(PHONEBOOK, 'w', newline='') as file:
+    with open(PHONEBOOK, "w", newline="") as file:
         writer = csv.writer(file)
         for entry in contact_list:
             writer.writerow(entry)
@@ -59,7 +68,7 @@ def add_entry(contact_list):
     entry.append(input("Введите личный телефон: "))
     contact_list.append(entry)
     save_contacts(contact_list)
-    print("Запись успешно добавлена.")
+    logger.info("Запись успешно добавлена.")
 
 
 def edit_entry(contact_list, index):
@@ -76,9 +85,9 @@ def edit_entry(contact_list, index):
         entry[4] = input(f"Рабочий телефон ({entry[4]}): ") or entry[4]
         entry[5] = input(f"Личный телефон ({entry[5]}): ") or entry[5]
         save_contacts(contact_list)
-        print("Запись успешно отредактирована.")
+        logger.info("Запись успешно отредактирована.")
     else:
-        print("Записи с таким индексом не существует.")
+        logger.error("Записи с таким индексом не существует.")
 
 
 def search_entries(contact_list, search_criteria):
@@ -101,7 +110,7 @@ def search_entries(contact_list, search_criteria):
     if search_results:
         display_entries(search_results)
     else:
-        print("Записи не найдены.")
+        logger.error("Записи не найдены.")
     return search_results
 
 
@@ -129,7 +138,7 @@ def main():
         elif choice == "5":  # Выход
             break
         else:
-            print("Некорректный выбор.")
+            logger.info("Некорректный выбор.")
 
 
 if __name__ == "__main__":
